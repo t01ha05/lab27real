@@ -56,6 +56,11 @@ int main() {
     villagerColors.clear();
     cout << "Size after clear: " << villagerColors.size() << endl;
 
+    if (villagerData.size() >= 10) {
+        cout << "Too many villagers";
+        return -1;
+    }
+
     while (true) {
         cout << "\nMenu:\n"
              << "1. Add Villager\n"
@@ -67,24 +72,37 @@ int main() {
              << "Enter your choice: ";
 
         int choice;
-        cin >> choice;
+        if (!(cin >> choice)) {
+            cin.clear();
+            cin.ignore(10000, '\n');
+            cout << "Invalid input.\n";
+            continue;
+        }
+        if (choice < 1 || choice > 6) {
+            cout << "Invalid choice.\n";
+            continue;
+        }
 
         switch (choice) {
             case 1: {
+                if (villagerData.size() >= 10) {
+                    cout << "Maximum number of villagers reached.\n";
+                    continue;
+                }
+
                 string name, species, catchphrase;
                 int friendship;
+                
                 cout << "Enter villager name: ";
                 cin >> name;
+                
+                if (name.empty()) {
+                    cout << "Name cannot be empty.\n";
+                    continue;
+                }
+
                 cout << "Enter friendship level (0-10): ";
                 cin >> friendship;
-                if (friendship < 0 || friendship > 10) {
-                    cout << "Invalid friendship level\n";
-                    break;
-                }
-                cout << "Enter species: ";
-                cin >> species;
-                cout << "Enter catchphrase: ";
-                cin >> catchphrase;
                 
                 villagerData[name] = make_tuple(friendship, species, catchphrase);
                 cout << name << " added.\n";
