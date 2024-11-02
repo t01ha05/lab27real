@@ -1,11 +1,14 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <tuple>
+
 using namespace std;
 
 int main() {
     // declarations
     map<string, vector<string>> villagerColors;
+    map<string, tuple<int, string, string>> villagerData;
 
     // insert elements into the map
     // note how the right-hand side of the assignment are the vector elements
@@ -52,6 +55,29 @@ int main() {
     cout << "\nSize before clear: " << villagerColors.size() << endl;
     villagerColors.clear();
     cout << "Size after clear: " << villagerColors.size() << endl;
+
+    while (true) {
+        cout << "\nMenu:\n"
+             << "1. Add Villager\n"
+             << "2. Delete Villager\n"
+             << "3. Increase Friendship\n"
+             << "4. Decrease Friendship\n"
+             << "5. Search for Villager\n"
+             << "6. Exit\n"
+             << "Enter your choice: ";
+
+        int choice;
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                // Add villager code here
+            case 2:
+                // Delete villager code here
+            case 3:
+                // Increase friendship code here
+        }
+    }
 
     return 0;
 }
