@@ -136,7 +136,17 @@ int main() {
                 }
                 break;
             }
+            case 6:
+                cout << "Exiting...\n";
+                return 0;
+            default:
+                cout << "Invalid choice.\n";
+                break;
         }
+    }
+        for (auto it = villagerData.begin(); it != villagerData.end(); it++) {
+        auto [f, s, c] = it->second;
+        cout << it->first << f << s << c;
     }
 
     return 0;
