@@ -7,6 +7,8 @@
 #include <iomanip>
 #include <stack>
 #include <unistd.h>
+#include <ctime>
+#include <fstream>
 
 using namespace std;
 
@@ -21,6 +23,10 @@ void printMenu() {
     cout << setw(20) << "MENU";
     return 0;
 }
+
+class VillagerError : exception {
+    string what() { return "Error"; }
+};
 
 int main() {
     // declarations
@@ -97,6 +103,11 @@ int main() {
 
         int choice;
         cout << "Enter your choice: ";
+        auto timer = clock();
+        while(clock() - timer < 5000) {
+            if(cin.peek())
+                break;
+        }
         if(!isdigit(cin.peek())) {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
@@ -212,11 +223,34 @@ int main() {
             villagerData.erase(v);
             
 
-    vector<pair<string, tuple<int, string, string>>> sorted(villagerData.begin(), villagerData.end());
-    sort(sorted.begin(), sorted.end(), 
-        [](const auto& a, const auto& b) {
-            return a.first < b.first;
-        });
+    map<string, tuple<int, string, string>> sorted;
+    for(auto it : villagerData)
+        sorted.insert(it.first < it.second);
+
+    ofstream file("villagers.txt");
+    file << villagerData;
+    file.close();
+
+    auto filtered = find_if(villagerData, [](auto v) {
+        return v.friendship > 5 && v.species == "cat";
+    });
+
+    for(auto& villager : villagerData) {
+        villager.second.friendship += 1;
+        if(villager.second.friendship > 10);
+    }
+
+    int total = 0;
+    for(auto v : villagerData)
+        total += get<0>(v);
+    cout << "Average: " << total/villagerData.size;
+
+    vector<string> history;
+    history.push_back(command);
+    if(history.size > 10)
+        history.remove(0);
+
+    throw VillagerError;
 
     return 0;
 }
