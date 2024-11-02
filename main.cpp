@@ -1,16 +1,7 @@
-Talha 
-Ahmed
-
-
-#include <iostream>
-#include <map>
-
-
 #include <iostream>
 #include <map>
 #include <vector>
 #include <tuple>
-
 
 using namespace std;
 
@@ -86,6 +77,10 @@ int main() {
                 cin >> name;
                 cout << "Enter friendship level (0-10): ";
                 cin >> friendship;
+                if (friendship < 0 || friendship > 10) {
+                    cout << "Invalid friendship level\n";
+                    break;
+                }
                 cout << "Enter species: ";
                 cin >> species;
                 cout << "Enter catchphrase: ";
@@ -95,16 +90,49 @@ int main() {
                 cout << name << " added.\n";
                 break;
             }
-            case 2:
-                // Delete villager code here
+            case 2: {
+                string name;
+                cout << "Enter villager name to delete: ";
+                cin >> name;
+                villagerData.erase(name);
+                villagerColors.erase(name);
+                cout << name << " deleted.\n";
+                break;
+            }
             case 3: {
                 string name;
                 cout << "Enter villager name to increase friendship: ";
                 cin >> name;
                 if (villagerData.count(name) > 0) {
                     auto& [friendship, species, catchphrase] = villagerData[name];
-                    friendship++;
+                    friendship = min(friendship + 1, 10);
                     cout << name << "'s friendship increased.\n";
+                }
+                break;
+            }
+            case 4: {
+                string name;
+                cout << "Enter villager name to decrease friendship: ";
+                cin >> name;
+                if (villagerData.count(name) > 0) {
+                    auto& [friendship, species, catchphrase] = villagerData[name];
+                    friendship = max(friendship - 1, 0);
+                    cout << name << "'s friendship decreased.\n";
+                } else {
+                    cout << name << " not found.\n";
+                }
+                break;
+            }
+            case 5: {
+                string name;
+                cout << "Enter villager name to search: ";
+                cin >> name;
+                if (villagerData.count(name) > 0) {
+                    auto& [friendship, species, catchphrase] = villagerData[name];
+                    cout << "Villager details:\n"
+                         << name << " [" << friendship << ", " << species << ", " << catchphrase << "]\n";
+                } else {
+                    cout << name << " not found.\n";
                 }
                 break;
             }
