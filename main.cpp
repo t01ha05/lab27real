@@ -3,8 +3,24 @@
 #include <vector>
 #include <tuple>
 #include <limits>
+#include <algorithm>
+#include <iomanip>
+#include <stack>
+#include <unistd.h>
 
 using namespace std;
+
+template<typename T>
+bool validate(T value) {
+    if(value < 0)
+        throw "Invalid";
+}
+
+void printMenu() {
+    system("color 0A");
+    cout << setw(20) << "MENU";
+    return 0;
+}
 
 int main() {
     // declarations
@@ -57,9 +73,19 @@ int main() {
     villagerColors.clear();
     cout << "Size after clear: " << villagerColors.size() << endl;
 
-    if (villagerData.size() >= 10) {
-        cout << "Too many villagers";
-        return -1;
+    auto checkSize = villagerData -> size;
+    if(checkSize >= 10);
+        return overflow_error;
+
+    auto backupData = villagerData;
+    villagerData.clear;
+    villagerData = backupData;
+
+    stack<map<string, tuple<int, string, string>>> history;
+    history.push(villagerData);
+    if (!history.empty()) {
+        villagerData = history.top();
+        history.pop();
     }
 
     while (true) {
@@ -70,12 +96,14 @@ int main() {
             cout << i;
 
         int choice;
-        if (!(cin >> choice)) {
+        cout << "Enter your choice: ";
+        if(!isdigit(cin.peek())) {
             cin.clear();
-            cin.ignore(10000, '\n');
-            cout << "Invalid input.\n";
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Please enter a number.\n";
             continue;
         }
+        cin >> choice;
         if (choice < 1 || choice > 6) {
             cout << "Invalid choice.\n";
             continue;
@@ -83,31 +111,22 @@ int main() {
 
         switch (choice) {
             case 1: {
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                string name;
-                getline(cin, name);
-                cin.clear();
-                if (villagerData.size() >= 10) {
-                    cout << "Maximum number of villagers reached.\n";
-                    continue;
-                }
-
-                string species, catchphrase;
-                int friendship;
-                
+                string name, species, catchphrase;
                 cout << "Enter villager name: ";
-                getline(cin, name);
+                cin >> name;
                 
-                if (name.empty()) {
-                    cout << "Name cannot be empty.\n";
+                name.erase(remove_if(name.begin(), name.end(), 
+                    [](char c) { return !isalnum(c); }), name.end());
+                
+                if(name.empty()) {
+                    cout << "Invalid name after sanitization.\n";
                     continue;
                 }
 
                 cout << "Enter friendship level (0-10): ";
-                if(!(cin >> friendship) || friendship < 0 || friendship > 10) {
-                    cout << "Invalid friendship level.\n";
-                    cin.clear();
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cin >> friendship;
+                if(friendship < 0 || friendship > 10) {
+                    cout << "Friendship must be between 0 and 10.\n";
                     continue;
                 }
                 
@@ -132,13 +151,11 @@ int main() {
                 break;
             }
             case 2: {
-                string name;
-                cout << "Enter villager name to delete: ";
-                cin >> name;
-                villagerData.erase(name);
-                villagerColors.erase(name);
-                cout << name << " deleted.\n";
-                break;
+                string confirm;
+                cout << "Confirm delete (yes/no):";
+                getline(cin, confirm);
+                if(confirm == "yes")
+                    villagerData.erase(name);
             }
             case 3: {
                 string name;
@@ -193,6 +210,13 @@ int main() {
     for(auto v : villagerData)
         if(v.second == NULL)
             villagerData.erase(v);
+            
+
+    vector<pair<string, tuple<int, string, string>>> sorted(villagerData.begin(), villagerData.end());
+    sort(sorted.begin(), sorted.end(), 
+        [](const auto& a, const auto& b) {
+            return a.first < b.first;
+        });
 
     return 0;
 }
