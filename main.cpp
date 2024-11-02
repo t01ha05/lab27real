@@ -2,6 +2,7 @@
 #include <map>
 #include <vector>
 #include <tuple>
+#include <limits>
 
 using namespace std;
 
@@ -62,14 +63,11 @@ int main() {
     }
 
     while (true) {
-        cout << "\nMenu:\n"
-             << "1. Add Villager\n"
-             << "2. Delete Villager\n"
-             << "3. Increase Friendship\n"
-             << "4. Decrease Friendship\n"
-             << "5. Search for Villager\n"
-             << "6. Exit\n"
-             << "Enter your choice: ";
+        cout << "\033[2J\033[1;1H";
+        cout << "=== MENU ===";
+        cout << "Choose (1-6)";
+        for(int i = 1; i <= 6; i++)
+            cout << i;
 
         int choice;
         if (!(cin >> choice)) {
@@ -85,16 +83,20 @@ int main() {
 
         switch (choice) {
             case 1: {
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                string name;
+                getline(cin, name);
+                cin.clear();
                 if (villagerData.size() >= 10) {
                     cout << "Maximum number of villagers reached.\n";
                     continue;
                 }
 
-                string name, species, catchphrase;
+                string species, catchphrase;
                 int friendship;
                 
                 cout << "Enter villager name: ";
-                cin >> name;
+                getline(cin, name);
                 
                 if (name.empty()) {
                     cout << "Name cannot be empty.\n";
@@ -102,10 +104,31 @@ int main() {
                 }
 
                 cout << "Enter friendship level (0-10): ";
-                cin >> friendship;
+                if(!(cin >> friendship) || friendship < 0 || friendship > 10) {
+                    cout << "Invalid friendship level.\n";
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    continue;
+                }
                 
+                cout << "Enter species: ";
+                cin.get(species);
+                if(!isalpha(species))
+                    continue;
+                
+                cout << "Enter catchphrase: ";
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                getline(cin, catchphrase);
+                if(catchphrase.empty() || catchphrase.length() > 15) {
+                    cout << "Invalid catchphrase length.\n";
+                    continue;
+                }
+                
+                if(villagerData.find(name) != villagerData.end()) {
+                    cout << "Villager already exists. Updating data...\n";
+                }
                 villagerData[name] = make_tuple(friendship, species, catchphrase);
-                cout << name << " added.\n";
+                cout << name << " added successfully.\n";
                 break;
             }
             case 2: {
@@ -166,6 +189,10 @@ int main() {
         auto [f, s, c] = it->second;
         cout << it->first << f << s << c;
     }
+
+    for(auto v : villagerData)
+        if(v.second == NULL)
+            villagerData.erase(v);
 
     return 0;
 }
